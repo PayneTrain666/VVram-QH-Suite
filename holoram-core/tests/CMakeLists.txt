@@ -1,35 +1,33 @@
 add_executable(test_codebook_coherence test_codebook_coherence.cpp)
 target_link_libraries(test_codebook_coherence PRIVATE holoram_core)
 add_test(NAME test_codebook_coherence COMMAND test_codebook_coherence)
-
 add_executable(test_codebook_determinism test_codebook_determinism.cpp)
 target_link_libraries(test_codebook_determinism PRIVATE holoram_core)
 add_test(NAME test_codebook_determinism COMMAND test_codebook_determinism)
-
 add_executable(test_codebook_salt_behavior test_codebook_salt_behavior.cpp)
 target_link_libraries(test_codebook_salt_behavior PRIVATE holoram_core)
 add_test(NAME test_codebook_salt_behavior COMMAND test_codebook_salt_behavior)
-
 add_executable(test_dense_roundtrip test_dense_roundtrip.cpp)
 target_link_libraries(test_dense_roundtrip PRIVATE holoram_core)
 add_test(NAME test_dense_roundtrip COMMAND test_dense_roundtrip)
-
 add_executable(test_sparse_quality test_sparse_quality.cpp)
 target_link_libraries(test_sparse_quality PRIVATE holoram_core)
 add_test(NAME test_sparse_quality COMMAND test_sparse_quality)
-
+add_executable(test_sparse_exact_residual test_sparse_exact_residual.cpp)
+target_link_libraries(test_sparse_exact_residual PRIVATE holoram_core)
+add_test(NAME test_sparse_exact_residual COMMAND test_sparse_exact_residual)
+add_executable(test_sparse_topk_payload test_sparse_topk_payload.cpp)
+target_link_libraries(test_sparse_topk_payload PRIVATE holoram_core)
+add_test(NAME test_sparse_topk_payload COMMAND test_sparse_topk_payload)
 add_executable(test_mmse_demix test_mmse_demix.cpp)
 target_link_libraries(test_mmse_demix PRIVATE holoram_core)
 add_test(NAME test_mmse_demix COMMAND test_mmse_demix)
-
 add_executable(test_sic_demix test_sic_demix.cpp)
 target_link_libraries(test_sic_demix PRIVATE holoram_core)
 add_test(NAME test_sic_demix COMMAND test_sic_demix)
-
 add_executable(test_substrate_write_read test_substrate_write_read.cpp)
 target_link_libraries(test_substrate_write_read PRIVATE holoram_core)
 add_test(NAME test_substrate_write_read COMMAND test_substrate_write_read)
-
 add_executable(test_writemap_recovery test_writemap_recovery.cpp)
 target_link_libraries(test_writemap_recovery PRIVATE holoram_core)
 add_test(NAME test_writemap_recovery COMMAND test_writemap_recovery)
