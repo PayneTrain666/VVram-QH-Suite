@@ -1,0 +1,13 @@
+config HOLO_RAM_KQ
+    tristate "HoloRAM kernel/user queue device"
+    depends on MMU
+    help
+      Experimental HoloRAM kernel/user queue device.
+      Provides /dev/holoram_kq for daemon-assisted exact or approximate memory operations.
+
+config HOLO_RAM_ZSWAP
+    tristate "HoloRAM exact zswap backend"
+    depends on HOLO_RAM_KQ && ZSWAP
+    help
+      Experimental exact/lossless zswap backend using HoloRAM handles.
+      Approximate-only QH modes must not be used here.
