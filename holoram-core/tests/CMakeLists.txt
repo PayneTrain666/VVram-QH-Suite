@@ -2,6 +2,14 @@ add_executable(test_codebook_coherence test_codebook_coherence.cpp)
 target_link_libraries(test_codebook_coherence PRIVATE holoram_core)
 add_test(NAME test_codebook_coherence COMMAND test_codebook_coherence)
 
+add_executable(test_codebook_determinism test_codebook_determinism.cpp)
+target_link_libraries(test_codebook_determinism PRIVATE holoram_core)
+add_test(NAME test_codebook_determinism COMMAND test_codebook_determinism)
+
+add_executable(test_codebook_salt_behavior test_codebook_salt_behavior.cpp)
+target_link_libraries(test_codebook_salt_behavior PRIVATE holoram_core)
+add_test(NAME test_codebook_salt_behavior COMMAND test_codebook_salt_behavior)
+
 add_executable(test_dense_roundtrip test_dense_roundtrip.cpp)
 target_link_libraries(test_dense_roundtrip PRIVATE holoram_core)
 add_test(NAME test_dense_roundtrip COMMAND test_dense_roundtrip)
