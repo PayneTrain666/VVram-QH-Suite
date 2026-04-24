@@ -1,6 +1,91 @@
 #include "holoram/core.h"
+
 #include <iomanip>
 #include <iostream>
 #include <vector>
-namespace { const char* quant_name(holoram::HoloQuantMode q){switch(q){case holoram::HoloQuantMode::Int8Complex:return "int8"; case holoram::HoloQuantMode::Int16Complex:return "int16"; default:return "other";}} void run_one(std::uint32_t q,std::uint32_t k,holoram::HoloQuantMode quant){std::vector<std::uint8_t> input(4096); for(std::size_t i=0;i<input.size();++i) input[i]=static_cast<std::uint8_t>((i*13+i/3)&0xFF); holoram::HoloCodebookConfig cb_cfg{}; cb_cfg.q=q; cb_cfg.channels=16; cb_cfg.strategy=holoram::HoloCodeStrategy::CazacZc; cb_cfg.fail_mu_max=0.75f; cb_cfg.strict_validation=true; holoram::HoloCodebook cb(cb_cfg); holoram::HoloCodecConfig cfg{}; cfg.q=q; cfg.k_sparse=k; cfg.codec_mode=holoram::HoloCodecMode::ApproxVisual; cfg.quant_mode=quant; const auto t0=holoram::now_ns(); auto enc=holoram::encode_sparse_topk(input.data(),static_cast<std::uint32_t>(input.size()),cfg,cb,3); const auto t1=holoram::now_ns(); auto dec=holoram::decode_sparse_topk(enc.payload.data(),static_cast<std::uint32_t>(enc.payload.size()),cfg,cb,3); const auto t2=holoram::now_ns(); const double ber=holoram::byte_error_rate(input.data(),dec.decoded.data(),static_cast<std::uint32_t>(input.size())); const double psnr=holoram::psnr_u8(input.data(),dec.decoded.data(),static_cast<std::uint32_t>(input.size())); const double enc_ms=static_cast<double>(t1-t0)/1e6; const double dec_ms=static_cast<double>(t2-t1)/1e6; const double ratio=enc.payload.empty()?0.0:static_cast<double>(input.size())/static_cast<double>(enc.payload.size()); std::cout<<"Q="<<std::setw(4)<<q<<" K="<<std::setw(2)<<k<<" quant="<<std::setw(5)<<quant_name(quant)<<" payload="<<std::setw(6)<<enc.payload.size()<<" ratio="<<std::setw(8)<<std::fixed<<std::setprecision(3)<<ratio<<" BER="<<std::setw(8)<<std::fixed<<std::setprecision(4)<<ber<<" PSNR="<<std::setw(8)<<std::fixed<<std::setprecision(3)<<psnr<<" enc_ms="<<std::setw(8)<<std::fixed<<std::setprecision(3)<<enc_ms<<" dec_ms="<<std::setw(8)<<std::fixed<<std::setprecision(3)<<dec_ms<<"\n";}}
-int main(){std::cout<<"HoloRAM sparse Top-K density benchmark\n"; std::cout<<"--------------------------------------\n"; const std::vector<std::uint32_t> q_values={256,512,1024}; const std::vector<std::uint32_t> k_values={8,16,24,32,48,64}; const std::vector<holoram::HoloQuantMode> quant_values={holoram::HoloQuantMode::Int8Complex,holoram::HoloQuantMode::Int16Complex}; for(auto q:q_values){for(auto k:k_values){if(k>q||k>holoram::HOLO_SPARSE_K_MAX) continue; for(auto quant:quant_values) run_one(q,k,quant);}} return 0;}
+
+namespace {
+
+const char* quant_name(holoram::HoloQuantMode q) {
+    switch (q) {
+        case holoram::HoloQuantMode::Int8Complex:
+            return "int8";
+        case holoram::HoloQuantMode::Int16Complex:
+            return "int16";
+        default:
+            return "other";
+    }
+}
+
+void run_one(std::uint32_t q, std::uint32_t k, holoram::HoloQuantMode quant, holoram::HoloCodecMode mode) {
+    std::vector<std::uint8_t> input(4096);
+    for (std::size_t i = 0; i < input.size(); ++i) {
+        input[i] = static_cast<std::uint8_t>((i * 13 + i / 3) & 0xFF);
+    }
+
+    holoram::HoloCodebookConfig cb_cfg{};
+    cb_cfg.q = q;
+    cb_cfg.channels = 16;
+    cb_cfg.strategy = holoram::HoloCodeStrategy::CazacZc;
+    cb_cfg.fail_mu_max = 0.75f;
+    cb_cfg.strict_validation = true;
+
+    holoram::HoloCodebook cb(cb_cfg);
+
+    holoram::HoloCodecConfig cfg{};
+    cfg.q = q;
+    cfg.k_sparse = k;
+    cfg.codec_mode = mode;
+    cfg.quant_mode = quant;
+    cfg.enable_crc = true;
+
+    const auto t0 = holoram::now_ns();
+    auto enc = holoram::encode_sparse_topk(input.data(), static_cast<std::uint32_t>(input.size()), cfg, cb, 3);
+    const auto t1 = holoram::now_ns();
+    auto dec = holoram::decode_sparse_topk(enc.payload.data(), static_cast<std::uint32_t>(enc.payload.size()), cfg, cb, 3);
+    const auto t2 = holoram::now_ns();
+
+    const double ber = holoram::byte_error_rate(input.data(), dec.decoded.data(), static_cast<std::uint32_t>(input.size()));
+    const double psnr = holoram::psnr_u8(input.data(), dec.decoded.data(), static_cast<std::uint32_t>(input.size()));
+    const double enc_ms = static_cast<double>(t1 - t0) / 1e6;
+    const double dec_ms = static_cast<double>(t2 - t1) / 1e6;
+    const double ratio = enc.payload.empty() ? 0.0 : static_cast<double>(input.size()) / static_cast<double>(enc.payload.size());
+
+    std::cout
+        << "Q=" << std::setw(4) << q
+        << " K=" << std::setw(2) << k
+        << " quant=" << std::setw(5) << quant_name(quant)
+        << " mode=" << static_cast<int>(mode)
+        << " payload=" << std::setw(6) << enc.payload.size()
+        << " ratio=" << std::setw(8) << std::fixed << std::setprecision(3) << ratio
+        << " BER=" << std::setw(8) << std::fixed << std::setprecision(4) << ber
+        << " PSNR=" << std::setw(8) << std::fixed << std::setprecision(3) << psnr
+        << " enc_ms=" << std::setw(8) << std::fixed << std::setprecision(3) << enc_ms
+        << " dec_ms=" << std::setw(8) << std::fixed << std::setprecision(3) << dec_ms
+        << "\n";
+}
+
+} // namespace
+
+int main() {
+    std::cout << "HoloRAM sparse Top-K density benchmark\n";
+    std::cout << "--------------------------------------\n";
+
+    const std::vector<std::uint32_t> q_values = {256, 512, 1024};
+    const std::vector<std::uint32_t> k_values = {8, 16, 24, 32, 48, 64};
+    const std::vector<holoram::HoloQuantMode> quant_values = {holoram::HoloQuantMode::Int8Complex, holoram::HoloQuantMode::Int16Complex};
+
+    for (auto q : q_values) {
+        for (auto k : k_values) {
+            if (k > q || k > holoram::HOLO_SPARSE_K_MAX) {
+                continue;
+            }
+            for (auto quant : quant_values) {
+                run_one(q, k, quant, holoram::HoloCodecMode::ApproxVisual);
+                run_one(q, k, quant, holoram::HoloCodecMode::ExactQhResidual);
+            }
+        }
+    }
+
+    return 0;
+}

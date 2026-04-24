@@ -1,10 +1,14 @@
 add_executable(bench_sparse_density bench_sparse_density.cpp)
 target_link_libraries(bench_sparse_density PRIVATE holoram_core)
+
 add_executable(bench_demix_mmse bench_demix_mmse.cpp)
 target_link_libraries(bench_demix_mmse PRIVATE holoram_core)
+
 add_executable(bench_substrate_throughput bench_substrate_throughput.cpp)
 target_link_libraries(bench_substrate_throughput PRIVATE holoram_core)
+
 add_executable(bench_quality_sweep bench_quality_sweep.cpp)
 target_link_libraries(bench_quality_sweep PRIVATE holoram_core)
+
 add_executable(bench_codebook_coherence bench_codebook_coherence.cpp)
 target_link_libraries(bench_codebook_coherence PRIVATE holoram_core)
