@@ -1,0 +1,19 @@
+add_executable(test_tile_map test_tile_map.cpp)
+target_link_libraries(test_tile_map PRIVATE holovram_runtime)
+add_test(NAME test_tile_map COMMAND test_tile_map)
+
+add_executable(test_residency_transitions test_residency_transitions.cpp)
+target_link_libraries(test_residency_transitions PRIVATE holovram_runtime)
+add_test(NAME test_residency_transitions COMMAND test_residency_transitions)
+
+add_executable(test_eviction_policy test_eviction_policy.cpp)
+target_link_libraries(test_eviction_policy PRIVATE holovram_runtime)
+add_test(NAME test_eviction_policy COMMAND test_eviction_policy)
+
+add_executable(test_prefetch_scheduler test_prefetch_scheduler.cpp)
+target_link_libraries(test_prefetch_scheduler PRIVATE holovram_runtime)
+add_test(NAME test_prefetch_scheduler COMMAND test_prefetch_scheduler)
+
+add_executable(test_qh_backing_roundtrip test_qh_backing_roundtrip.cpp)
+target_link_libraries(test_qh_backing_roundtrip PRIVATE holovram_runtime)
+add_test(NAME test_qh_backing_roundtrip COMMAND test_qh_backing_roundtrip)
