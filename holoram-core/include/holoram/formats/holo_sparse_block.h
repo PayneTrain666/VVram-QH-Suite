@@ -1,12 +1,16 @@
 #pragma once
+
 #include <cstdint>
+
 namespace holoram {
-constexpr std::uint32_t HOLO_SPARSE_BLOCK_MAGIC = 0x48535042u;
-constexpr std::uint32_t HOLO_SPARSE_PAYLOAD_MAGIC = 0x48535048u;
-constexpr std::uint32_t HOLO_RESIDUAL_MAGIC = 0x48524553u;
+
+constexpr std::uint32_t HOLO_SPARSE_BLOCK_MAGIC = 0x48535042u;   // HSPB
+constexpr std::uint32_t HOLO_SPARSE_PAYLOAD_MAGIC = 0x48535048u; // HSPH
+constexpr std::uint32_t HOLO_RESIDUAL_MAGIC = 0x48524553u;       // HRES
 constexpr std::uint32_t HOLO_SPARSE_K_MAX = 64;
+
 struct HoloSparsePayloadHeader {
-    std::uint32_t version = 1;
+    std::uint32_t version = 2;
     std::uint32_t struct_size = sizeof(HoloSparsePayloadHeader);
     std::uint32_t magic = HOLO_SPARSE_PAYLOAD_MAGIC;
     std::uint32_t decoded_bytes = 0;
@@ -18,8 +22,13 @@ struct HoloSparsePayloadHeader {
     std::uint16_t quant_mode = 0;
     std::uint16_t demix_mode = 0;
     std::uint16_t channel = 0;
+    std::uint16_t residual_compression = 0;
+    std::uint16_t reserved0 = 0;
     std::uint32_t flags = 0;
+    std::uint32_t decoded_crc32 = 0;
+    std::uint32_t sparse_crc32 = 0;
 };
+
 struct HoloSparseBlock {
     std::uint32_t version = 1;
     std::uint32_t struct_size = sizeof(HoloSparseBlock);
@@ -33,12 +42,19 @@ struct HoloSparseBlock {
     std::int16_t re[HOLO_SPARSE_K_MAX]{};
     std::int16_t im[HOLO_SPARSE_K_MAX]{};
 };
+
 struct HoloResidualPayloadHeader {
-    std::uint32_t version = 1;
+    std::uint32_t version = 2;
     std::uint32_t struct_size = sizeof(HoloResidualPayloadHeader);
     std::uint32_t magic = HOLO_RESIDUAL_MAGIC;
-    std::uint32_t residual_bytes = 0;
+    std::uint32_t residual_payload_bytes = 0;
+    std::uint32_t residual_uncompressed_bytes = 0;
     std::uint32_t decoded_bytes = 0;
+    std::uint16_t compression = 0;
+    std::uint16_t reserved0 = 0;
     std::uint32_t flags = 0;
+    std::uint32_t residual_payload_crc32 = 0;
+    std::uint32_t decoded_crc32 = 0;
 };
-}
+
+} // namespace holoram

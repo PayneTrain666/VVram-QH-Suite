@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 
 project(holoram-core
-    VERSION 0.1.0
+    VERSION 0.2.0
     DESCRIPTION "Quantum-holographic memory core library"
     LANGUAGES CXX
 )
@@ -13,6 +13,7 @@ option(HOLO_BUILD_EXAMPLES "Build examples" ON)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 include(cmake/HoloCompilerOptions.cmake)
 
@@ -41,6 +42,7 @@ add_library(holoram_core
     src/metrics/ssim.cpp
     src/metrics/cosine.cpp
     src/metrics/timing.cpp
+    src/metrics/crc32.cpp
 )
 
 target_include_directories(holoram_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)

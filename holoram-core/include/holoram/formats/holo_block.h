@@ -16,11 +16,12 @@ struct HoloBlockHeader {
     std::uint16_t codec_mode = 0;
     std::uint16_t quant_mode = 0;
     std::uint16_t demix_mode = 0;
-    std::uint16_t reserved0 = 0;
+    std::uint16_t residual_compression = 0;
     std::uint32_t decoded_bytes = 0;
     std::uint32_t payload_bytes = 0;
     std::uint32_t generation = 0;
-    std::uint32_t crc32 = 0;
+    std::uint32_t decoded_crc32 = 0;
+    std::uint32_t payload_crc32 = 0;
 };
 
 } // namespace holoram
