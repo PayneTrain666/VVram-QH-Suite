@@ -1,0 +1,41 @@
+name: holoram-core-ci
+
+on:
+  push:
+    paths:
+      - "holoram-core/**"
+      - ".github/workflows/holoram-core-ci.yml"
+  pull_request:
+    paths:
+      - "holoram-core/**"
+      - ".github/workflows/holoram-core-ci.yml"
+  workflow_dispatch:
+
+jobs:
+  build-test:
+    name: Build and test holoram-core
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake ninja-build g++
+
+      - name: Configure
+        working-directory: holoram-core
+        run: |
+          cmake -G Ninja -S . -B build-ninja -DHOLO_ENABLE_CUDA=OFF
+
+      - name: Build
+        working-directory: holoram-core
+        run: |
+          ninja -C build-ninja
+
+      - name: Test
+        working-directory: holoram-core
+        run: |
+          ctest --test-dir build-ninja --output-on-failure
