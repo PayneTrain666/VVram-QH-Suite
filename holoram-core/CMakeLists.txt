@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 
 project(holoram-core
-    VERSION 0.2.0
+    VERSION 0.3.0
     DESCRIPTION "Quantum-holographic memory core library"
     LANGUAGES CXX
 )
@@ -27,6 +27,7 @@ add_library(holoram_core
     src/codec/quant_int8.cpp
     src/codec/quant_int16.cpp
     src/codec/residual_codec.cpp
+    src/codec/sparse_payload_validation.cpp
     src/demix/matched_filter.cpp
     src/demix/mmse.cpp
     src/demix/sic.cpp
